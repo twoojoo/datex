@@ -34,14 +34,14 @@ datex now - 400hours diff 2012-07-08 to h
 
 ### Operations
 
-- **ADD/SUBTRACT**: "+", "-"
-- **COMPARISON**: "=", "==", "aft", "bef", "afteq", "befeq"
-- **DIFF**: "diff"
+- **Add/Subtract**: "+", "-"
+- **Comparison**: "=", "==", "aft", "bef", "afteq", "befeq"
+- **Diff**: "diff"
 
 ### Date Aliases
 
 - **Today at 00:00:00**: "today", "td"
-- **Current time**:"now"
+- **Current time**: "now"
 
 ### Date Formats
 
