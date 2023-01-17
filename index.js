@@ -178,7 +178,7 @@ function printResult(value) {
 }
 
 function printHelp() {
-	console.log("\nDateCalc v" + require("./package.json").version)
+	console.log("\nDateX v" + require("./package.json").version)
 	console.log("\nUsage:")
 	console.log("\tdatecalc <value1> <operator> <value2> <operator> <value3>....\n")
 	console.log("\tExample 1: \n\t\tdatecalc now - 400hours to YYYY-MM-DD")
