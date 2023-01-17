@@ -46,7 +46,7 @@ datex now - 400hours diff 2012-07-08 to h
 ### Date Formats
 
 - *YYYY-MM-DDThh:mm:ss*
-- *DD/MM/YYYY hh:mm:ss>*
+- *DD/MM/YYYY hh:mm:ss*
 - ...anything generally accepted will fit
 
 ### Absolute values format:
