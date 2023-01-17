@@ -11,7 +11,7 @@ npm install -g datex-cli
 ### Usage
 
 ```bash
-datex <value1> <operator> <value2> <operator> <value3>....
+datex <value1> <operator> <value2> <operator> <value3>.... to <output format>
 ```
 
 > **Note**: every operation is applied to the result of the previous one
