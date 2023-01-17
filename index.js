@@ -1,6 +1,5 @@
-#!/usr/bin/env node
-
 'use strict'
+
 const moment = require("moment")
 
 const COLORS = {
@@ -15,7 +14,7 @@ const TODAY_ALIASES = ["today", "td"]
 const NOW_ALIASES = ["now"]
 
 const SUM_OPERATORS = ["+", "-"]
-const COMPARE_OPERATORS = ["=", "==", "aft", "after", "bef", "afteq", "befeq"]
+const COMPARE_OPERATORS = ["=", "==", "aft", "bef", "afteq", "befeq"]
 const DIFF_OPERATORS = ["diff"]
 
 const OPERATORS = SUM_OPERATORS
@@ -154,7 +153,7 @@ function validateSum(item1, item2) {
 			if (SECONDS.includes(unit)) return SECONDS[0]
 			if (MILLISECONDS.includes(unit)) return MILLISECONDS[0]
 		}
-	} else throwError("value on the right cannot be a date")
+	} else throwError("value on the right of a sum/diff operation cannot be a date")
 }
 
 function validateCompare(item1, item2) {
@@ -170,7 +169,9 @@ function isUnitValid(unit) {
 }
 
 function printResult(value) {
-	try { value = value.format() } catch (err) {}
+	try { value = value.format(resultFormat) } catch (err) {
+		if (!err.message.includes("not a function")) throw err
+	}
 	console.log(COLORS.FgGreen + value + COLORS.Reset)
 	process.exit(0)
 }
@@ -178,10 +179,12 @@ function printResult(value) {
 function printHelp() {
 	console.log("\nDateCalc v" + require("./package.json").version)
 	console.log("\nUsage:")
-	console.log("\tdatecalc <value1> <operator> <value2> <operator> <value3>....")
-	console.log("\te.g.: datecalc now - 400hours diff 2012-07-08")
-	console.log("\n\t\t> this command calculates the datetime of 400 hours before current time \n\t\tand then calculates the difference between the result and 2012-07-08")
-	console.log("\n\tNOTE that every operation is applied to the result of the previous one\n")
+	console.log("\tdatecalc <value1> <operator> <value2> <operator> <value3>....\n")
+	console.log("\tExample 1: \n\t\tdatecalc now - 400hours to YYYY-MM-DD")
+	console.log("\n\t\t> calculates the datetime of 400 hours before\n\t\tcurrent time and parses it to the given format\n")
+	console.log("\tExample 2: \n\t\tdatecalc now - 400hours diff 2012-07-08 to h")
+	console.log("\n\t\t> calculates the datetime of 400 hours before current time \n\t\tand then calculates the difference between the result and\n\t\t2012-07-08 converting it to hours")
+	console.log("\n\tNOTE: every operation is applied to the result of the previous one\n")
 	console.log("Operations:")
 	console.log("\tSUM/DIFF: \t\"" + SUM_OPERATORS.join("\", \"") + "\"")
 	console.log("\tCOMPARISON: \t\"" + COMPARE_OPERATORS.join("\", \"") + "\"")
