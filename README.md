@@ -35,7 +35,7 @@ datex now - 400hours diff 2012-07-08 to h
 ### Operations
 
 - **Add/Subtract**: "+", "-"
-- **Comparison**: "eq", "aft", "bef", "afteq", "befeq"
+- **Comparison**: "=", "aft", "bef", "afteq", "befeq"
 - **Diff**: "diff"
 
 ### Date Aliases
