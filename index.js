@@ -15,7 +15,7 @@ const TODAY_ALIASES = ["today", "td"]
 const NOW_ALIASES = ["now"]
 
 const SUM_OPERATORS = ["+", "-"]
-const COMPARE_OPERATORS = ["=", "==", "aft", "bef", "afteq", "befeq"]
+const COMPARE_OPERATORS = ["=", "aft", "bef", "afteq", "befeq"]
 const DIFF_OPERATORS = ["diff"]
 
 const OPERATORS = SUM_OPERATORS
