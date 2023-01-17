@@ -1,5 +1,6 @@
-'use strict'
+#!/usr/bin/env node
 
+'use strict'
 const moment = require("moment")
 
 const COLORS = {
@@ -46,7 +47,7 @@ let args = process.argv
 args.shift()
 args.shift()
 
-if (args.includes("help")) {
+if (args.includes("help") || args.includes("--help") || args.includes("-help") || args.includes("-h")) {
 	printHelp()
 	process.exit(0)
 }
