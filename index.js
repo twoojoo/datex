@@ -15,8 +15,8 @@ const TODAY_ALIASES = ["today", "td"]
 const NOW_ALIASES = ["now"]
 
 const SUM_OPERATORS = ["+", "-"]
-const COMPARE_OPERATORS = ["=", "==", ">", "<", ">=", "<="]
-const DIFF_OPERATORS = ["--", "diff"]
+const COMPARE_OPERATORS = ["=", "==", "aft", "after", "bef", "afteq", "befeq"]
+const DIFF_OPERATORS = ["diff"]
 
 const OPERATORS = SUM_OPERATORS
 	.concat(COMPARE_OPERATORS)
@@ -29,7 +29,7 @@ const WEEKS = ["week", "weeks", "W", "w"]
 const DAYS = ["day", "days", "D", "d"]
 const HOURS = ["hour", "hours", "h", "H"]
 const MINUTES = ["minute", "minutes", "m", "min"]
-const SECONDS = ["second", "seconds", "s", "S"]
+const SECONDS = ["second", "seconds", "s", "S", "sec"]
 const MILLISECONDS = ["millisecond", "milliseconds", "ms", "MS", "milli", "millis"]
 
 const ALL_UNITS = YEARS
@@ -47,18 +47,27 @@ let args = process.argv
 args.shift()
 args.shift()
 
+if (args.includes("help")) {
+	printHelp()
+	process.exit(0)
+}
+
+let resultFormat = undefined
+
 args = parseArgs(args)
 if (OPERATORS.includes(args[args.length - 1])) throwError("last parameter can't be an operator")
 if (!args[1]) throwError("provide a valid operation")
 
 function parseArgs(args) {
+	args = parseResultFormat(args)
+	
 	return args.map((arg, i) => {
 		if (i % 2 == 1) {
 			if (!OPERATORS.includes(arg)) throwError("invalid operation - allowed values: " + OPERATORS.join(", "))
 			else return arg
 		} else {
 			try { //check if valid date
-				date = stringToDate(arg)
+				const date = stringToDate(arg)
 				if (!date.isValid()) throw Error
 				return date
 			} catch (err) {
@@ -92,7 +101,6 @@ function throwError(msg) {
 }
 
 function stringToDate(str) {
-	//prevent moment warning
 	const warn = console.warn;
 	console.warn = () => {};
 	const date = moment(str)
@@ -110,16 +118,15 @@ function parseValue(str) {
 
 function operations(item1, item2) {
 	return {
-		"+": () => item1.add(item2[0], item2[1]),
-		"-": () => item1.subtract(item2[0], item2[1]),
+		"+": () => item1.clone().add(item2[0], item2[1]),
+		"-": () => item1.clone().subtract(item2[0], item2[1]),
 		"=": () => item1.isSame(item2),
 		"==": () => item1.isSame(item2),
-		">": () => item1.isAfter(item2),
-		">=": () => item1.isSameOrAfter(item2),
-		"<": () => item1.isBefore(item2),
-		"<=": () => item1.isSameOrBefore(item2),
-		"--": () => item1.diff(item2, "ms"),
-		"diff": () => item1.diff(item2, "ms")
+		"aft": () => item1.isAfter(item2),
+		"afteq": () => item1.isSameOrAfter(item2),
+		"bef": () => item1.isBefore(item2),
+		"befeq": () => item1.isSameOrBefore(item2),
+		"diff": () => item1.diff(item2, resultFormat)
 	}
 }
 
@@ -163,7 +170,69 @@ function isUnitValid(unit) {
 }
 
 function printResult(value) {
-	try { value = value.format()} catch (err) {}
+	try { value = value.format() } catch (err) {}
 	console.log(COLORS.FgGreen + value + COLORS.Reset)
 	process.exit(0)
+}
+
+function printHelp() {
+	console.log("\nDateCalc v" + require("./package.json").version)
+	console.log("\nUsage:")
+	console.log("\tdatecalc <value1> <operator> <value2> <operator> <value3>....")
+	console.log("\te.g.: datecalc now - 400hours diff 2012-07-08")
+	console.log("\n\t\t> this command calculates the datetime of 400 hours before current time \n\t\tand then calculates the difference between the result and 2012-07-08")
+	console.log("\n\tNOTE that every operation is applied to the result of the previous one\n")
+	console.log("Operations:")
+	console.log("\tSUM/DIFF: \t\"" + SUM_OPERATORS.join("\", \"") + "\"")
+	console.log("\tCOMPARISON: \t\"" + COMPARE_OPERATORS.join("\", \"") + "\"")
+	console.log("\tDIFF: \t\t\"" + DIFF_OPERATORS.join("\", \"") + "\"\n")
+	console.log("Date aliases:")
+	console.log("\tToday at 00:00:00:  \"" + TODAY_ALIASES.join("\", \"") + "\"")
+	console.log("\tCurrent time:       \"" + NOW_ALIASES.join(", ") + "\"\n")
+	console.log("Date values formats:")
+	console.log("\t<YYYY-MM-DDThh:mm:ss>,")
+	console.log("\t<DD/MM/YYYY hh:mm:ss>,")
+	console.log("\t...anything generally accepted will fit\n")
+	console.log("Absolute values format:")
+	console.log("\t<value><unit>")
+	console.log("\te.g.: 500d\n")
+	console.log("Time units aliases:")
+	console.log("\tYears:        \"" + YEARS.join("\", \"") + "\"")
+	console.log("\tMonths:       \"" + MONTHS.join("\", \"") + "\"")
+	console.log("\tWeeks:        \"" + WEEKS.join("\", \"") + "\"")
+	console.log("\tDays:         \"" + DAYS.join("\", \"") + "\"")
+	console.log("\tHours:        \"" + HOURS.join("\", \"") + "\"")
+	console.log("\tMinutes:      \"" + MINUTES.join("\", \"") + "\"")
+	console.log("\tSeconds:      \"" + SECONDS.join("\", \"") + "\"")
+	console.log("\tMilliseconds: \"" + MILLISECONDS.join("\", \"") + "\"")
+	console.log()
+}
+
+function parseResultFormat(args) {
+	if (args[args.length - 1] == "to") throwError("provide a valid format for the result")
+
+	if (args[args.length - 2] == "to") {
+		let givenFormat = args[args.length - 1]
+		const lastOperation = args[args.length - 4]
+
+		if (COMPARE_OPERATORS.includes(lastOperation)) throwError("a comparison operator return a boolean value that cannot be converted to " + givenFormat)
+
+		if (DIFF_OPERATORS.includes(lastOperation)) {
+			if (!ALL_UNITS.includes(givenFormat)) throwError("an absolute value cannot be formatted as " + `"${givenFormat}"`)
+			if (YEARS.includes(givenFormat)) givenFormat = YEARS[0]
+			if (MONTHS.includes(givenFormat)) givenFormat = MONTHS[0]
+			if (WEEKS.includes(givenFormat)) givenFormat = WEEKS[0]
+			if (DAYS.includes(givenFormat)) givenFormat = DAYS[0]
+			if (HOURS.includes(givenFormat)) givenFormat = HOURS[0]
+			if (MINUTES.includes(givenFormat)) givenFormat = MINUTES[0]
+			if (SECONDS.includes(givenFormat)) givenFormat = SECONDS[0]
+			if (MILLISECONDS.includes(givenFormat)) givenFormat = MILLISECONDS[0]
+		}
+
+		resultFormat = givenFormat
+
+		args.pop()
+		args.pop()
+		return args
+	} else return args
 }
