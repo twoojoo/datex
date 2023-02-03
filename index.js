@@ -180,10 +180,10 @@ function printResult(value) {
 function printHelp() {
 	console.log("\nDateX v" + require("./package.json").version)
 	console.log("\nUsage:")
-	console.log("\tdatecalc <value1> <operator> <value2> <operator> <value3>....\n")
-	console.log("\tExample 1: \n\t\tdatecalc now - 400hours to YYYY-MM-DD")
+	console.log("\tdatex <value1> <operator> <value2> <operator> <value3>....\n")
+	console.log("\tExample 1: \n\t\tdatex now - 400hours to YYYY-MM-DD")
 	console.log("\n\t\t> calculates the datetime of 400 hours before\n\t\tcurrent time and parses it to the given format\n")
-	console.log("\tExample 2: \n\t\tdatecalc now - 400hours diff 2012-07-08 to h")
+	console.log("\tExample 2: \n\t\tdatex now - 400hours diff 2012-07-08 to h")
 	console.log("\n\t\t> calculates the datetime of 400 hours before current time \n\t\tand then calculates the difference between the result and\n\t\t2012-07-08 converting it to hours")
 	console.log("\n\tNOTE: every operation is applied to the result of the previous one\n")
 	console.log("Operations:")
